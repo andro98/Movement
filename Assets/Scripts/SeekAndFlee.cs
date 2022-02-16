@@ -1,21 +1,28 @@
 using UnityEngine;
 
-public enum KinematicState { Seek, Flee }
+public enum SteeringState { Seek, Flee }
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class SeekAndFlee : MonoBehaviour
 {
     private Rigidbody2D character;
-    public Transform target;
-    public float maxSpeed = 2f;
 
-    public KinematicState kinematicState = KinematicState.Seek;
-    private class KinematicOutput
+    public Transform target;
+
+    public float maxSpeed = 6f;
+
+    public float maxAcceleration = 2f;
+
+    public SteeringState steeringState = SteeringState.Seek;
+    private class SteeringOutput
     {
-        public Vector3 velocity { get; set; }
+        public Vector3 acceleration { get; set; }
         public float rotation { get; set; }
     }
 
-    private KinematicOutput kinematicOutput = new KinematicOutput { velocity = Vector3.zero, rotation = 0f };
+    private SteeringOutput steeringOutput = new SteeringOutput { acceleration = Vector3.zero, rotation = 0f };
+
+    private Vector3 velocity = Vector3.zero;
 
     private void Awake()
     {
@@ -26,21 +33,29 @@ public class SeekAndFlee : MonoBehaviour
     {
         setKinematicOutput();
 
-        character.transform.position += kinematicOutput.velocity * Time.fixedDeltaTime;
+        character.transform.position += velocity  * Time.fixedDeltaTime;
 
-        character.transform.rotation = Quaternion.AngleAxis(kinematicOutput.rotation, Vector3.forward);
+        //character.transform.rotation = Quaternion.AngleAxis(steeringOutput.rotation, Vector3.forward);
+
+        velocity += steeringOutput.acceleration * Time.fixedDeltaTime;
+
+        if(velocity.magnitude > maxSpeed)
+        {
+            velocity.Normalize();
+            velocity *= maxSpeed;
+        }
     }
-
+    
     private void setKinematicOutput()
     {
         // Get Direction of movement
-        kinematicOutput.velocity = kinematicState == KinematicState.Seek ? target.position - character.transform.position : character.transform.position - target.position;
+        steeringOutput.acceleration = steeringState == SteeringState.Seek ? target.position - character.transform.position : character.transform.position - target.position;
         // Normalize vector 
-        kinematicOutput.velocity = kinematicOutput.velocity.normalized;
+        steeringOutput.acceleration = steeringOutput.acceleration.normalized;
         // Max speed 
-        kinematicOutput.velocity *= maxSpeed;
+        steeringOutput.acceleration *= maxAcceleration;
         // Calculate angle of rotation
-        kinematicOutput.rotation = CacluateOrientation(kinematicOutput.velocity);
+        steeringOutput.rotation = 0f;
     }
 
     private float CacluateOrientation(Vector3 direction)
