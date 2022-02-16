@@ -13,6 +13,11 @@ public class SeekAndFlee : MonoBehaviour
 
     public float maxAcceleration = 2f;
 
+    public float arrivalRadius = 0.1f;
+    public float slowRadius = 5f;
+    public float timeTimeTarget= 0.1f;
+
+
     public SteeringState steeringState = SteeringState.Seek;
     private class SteeringOutput
     {
@@ -31,22 +36,56 @@ public class SeekAndFlee : MonoBehaviour
 
     private void FixedUpdate()
     {
-        setKinematicOutput();
+        getArrivingOutput();
 
-        character.transform.position += velocity  * Time.fixedDeltaTime;
+        character.transform.position += velocity * Time.fixedDeltaTime;
 
         //character.transform.rotation = Quaternion.AngleAxis(steeringOutput.rotation, Vector3.forward);
 
         velocity += steeringOutput.acceleration * Time.fixedDeltaTime;
 
-        if(velocity.magnitude > maxSpeed)
+        if (velocity.magnitude > maxSpeed)
         {
             velocity.Normalize();
             velocity *= maxSpeed;
         }
     }
     
-    private void setKinematicOutput()
+    private void getArrivingOutput()
+    {
+        Vector3 direction = target.position - character.transform.position;
+        float distance = direction.magnitude;
+
+        float targetSpeed = 0;
+        if(distance < arrivalRadius)
+        {
+            steeringOutput.acceleration = Vector3.zero;
+            velocity = Vector3.zero;
+            return;
+        }
+        if(distance > slowRadius)
+        {
+            targetSpeed = maxSpeed;
+        }
+        else
+        {
+            targetSpeed = maxSpeed * distance / slowRadius;
+        }
+
+        Vector3 targetVelocity = direction;
+        targetVelocity.Normalize();
+        targetVelocity *= targetSpeed;
+
+        steeringOutput.acceleration = (targetVelocity - velocity) / timeTimeTarget;
+
+        if(steeringOutput.acceleration.magnitude > maxAcceleration)
+        {
+            steeringOutput.acceleration.Normalize();
+            steeringOutput.acceleration *= maxAcceleration;
+        }
+    }
+
+    private void getSteeringOutput()
     {
         // Get Direction of movement
         steeringOutput.acceleration = steeringState == SteeringState.Seek ? target.position - character.transform.position : character.transform.position - target.position;

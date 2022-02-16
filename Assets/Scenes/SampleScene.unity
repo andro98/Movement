@@ -255,6 +255,9 @@ MonoBehaviour:
   target: {fileID: 716328431}
   maxSpeed: 6
   maxAcceleration: 1
+  arrivalRadius: 0.5
+  slowRadius: 5
+  timeToTarget: 0.1
   steeringState: 0
 --- !u!50 &524182040
 Rigidbody2D:
