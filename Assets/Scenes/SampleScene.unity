@@ -218,6 +218,7 @@ GameObject:
   - component: {fileID: 524182039}
   - component: {fileID: 524182040}
   - component: {fileID: 524182041}
+  - component: {fileID: 524182042}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -295,10 +296,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 716328431}
   maxRotation: 6
-  maxAngularAcceleration: 4
-  targetRadius: 2
-  slowRadius: 5
+  maxAngularAcceleration: 2
+  arrivalRadius: 1.5
+  slowRadius: 2
   timeTimeTarget: 0.1
+--- !u!114 &524182042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 524182037}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d01225eb3b0eab43999ca262086069f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxTargetSpeed: 60
+  maxAcceleration: 0.1
+  timeTimeTarget: 5
 --- !u!1 &716328430
 GameObject:
   m_ObjectHideFlags: 0
