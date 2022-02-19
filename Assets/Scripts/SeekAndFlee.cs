@@ -19,13 +19,8 @@ public class SeekAndFlee : MonoBehaviour
 
 
     public SteeringState steeringState = SteeringState.Seek;
-    private class SteeringOutput
-    {
-        public Vector3 acceleration { get; set; }
-        public float rotation { get; set; }
-    }
 
-    private SteeringOutput steeringOutput = new SteeringOutput { acceleration = Vector3.zero, rotation = 0f };
+    private SteeringOutput steeringOutput = new SteeringOutput { acceleration = Vector3.zero, angular = 0f };
 
     private Vector3 velocity = Vector3.zero;
 
@@ -94,7 +89,7 @@ public class SeekAndFlee : MonoBehaviour
         // Max speed 
         steeringOutput.acceleration *= maxAcceleration;
         // Calculate angle of rotation
-        steeringOutput.rotation = 0f;
+        steeringOutput.angular = 0f;
     }
 
     private float CacluateOrientation(Vector3 direction)
