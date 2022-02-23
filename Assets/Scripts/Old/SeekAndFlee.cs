@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using DataStructure;
 public enum SteeringState { Seek, Flee }
 
 [RequireComponent(typeof(Rigidbody2D))]
