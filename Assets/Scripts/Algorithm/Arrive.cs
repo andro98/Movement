@@ -49,6 +49,7 @@ namespace MovementAlgorithm
 
             steering.angular = 0;
             steering.shouldCharacterStop = false;
+            steering.testPredictionPosition = ArriveData.TargetPosition;
             return steering;
         }
     }

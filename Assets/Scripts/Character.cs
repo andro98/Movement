@@ -6,15 +6,19 @@ public class Character : MonoBehaviour
 {
     public AlignData alignData;
 
-    public ArriveData arriveData;
+    //public ArriveData arriveData;
 
-    public VelocityMatchingData velocityMatchingData;
+    //public VelocityMatchingData velocityMatchingData;
+
+    public PurseData purseData;
 
     private Align align;
 
-    private Arrive arrive;
+    //private Arrive arrive;
 
-    private VelocityMatching velocityMatching;
+    //private VelocityMatching velocityMatching;
+
+    private Pursue pursue;
 
     private float rotationVelocity = 0;
 
@@ -26,55 +30,81 @@ public class Character : MonoBehaviour
     {
         player = FindObjectOfType<Player>();
         align = new Align(alignData);
-        arrive = new Arrive(arriveData);
-        velocityMatching = new VelocityMatching(velocityMatchingData);
+        //arrive = new Arrive(arriveData);
+        //velocityMatching = new VelocityMatching(velocityMatchingData);
+
+        pursue = new Pursue(purseData);
     }
 
     private void FixedUpdate()
     {
-        ExcuteArrive();
+        ExcutePursue();
 
         //ExcuteVelocityMatching();
 
         ExecuteAlign();
     }
 
-    private void ExcuteVelocityMatching()
+    //private void ExcuteVelocityMatching()
+    //{
+    //    velocityMatchingData.UpdateData(this.velocity, player.GetVelocity());
+    //    SteeringOutput steeringOutput = velocityMatching.GetSteering();
+
+    //    this.transform.position += velocity * Time.fixedDeltaTime;
+
+    //    velocity += steeringOutput.acceleration * Time.fixedDeltaTime;
+
+    //    if (velocity.magnitude > player.maxSpeed)
+    //    {
+    //        velocity.Normalize();
+    //        velocity *= player.maxSpeed;
+    //    }
+    //}
+    private void ExcutePursue()
     {
-        velocityMatchingData.UpdateData(this.velocity, player.GetVelocity());
-        SteeringOutput steeringOutput = velocityMatching.GetSteering();
-
-        this.transform.position += velocity * Time.fixedDeltaTime;
-
-        velocity += steeringOutput.acceleration * Time.fixedDeltaTime;
-
-        if (velocity.magnitude > player.maxSpeed)
-        {
-            velocity.Normalize();
-            velocity *= player.maxSpeed;
-        }
-    }
-
-    private void ExcuteArrive()
-    {
-        arriveData.UpdateData(this.transform.position, player.transform.position, this.velocity);
-        SteeringOutput seekSteeringOutput = arrive.GetSteering();
+        purseData.UpdateData(this.transform.position, player.transform.position, this.velocity, player.GetVelocity());
+        SteeringOutput seekSteeringOutput = pursue.GetSteering();
 
         this.transform.position += velocity * Time.fixedDeltaTime;
 
         velocity += seekSteeringOutput.acceleration * Time.fixedDeltaTime;
 
-        if (velocity.magnitude > arriveData.maxSpeed)
+        if (velocity.magnitude > purseData.maxSpeed)
         {
             velocity.Normalize();
-            velocity *= arriveData.maxSpeed;
+            velocity *= purseData.maxSpeed;
         }
 
         if (seekSteeringOutput.shouldCharacterStop)
         {
             velocity = Vector3.zero;
         }
-    }
+
+        Debug.DrawLine(this.transform.position, seekSteeringOutput.testPredictionPosition, Color.blue);
+    } 
+
+    //private void ExcuteArrive()
+    //{
+    //    purseData.UpdateData(this.transform.position, player.transform.position, this.velocity, player.GetVelocity());
+    //    SteeringOutput seekSteeringOutput = pursue.GetSteering();
+
+    //    this.transform.position += velocity * Time.fixedDeltaTime;
+
+    //    velocity += seekSteeringOutput.acceleration * Time.fixedDeltaTime;
+
+    //    if (velocity.magnitude > purseData.maxSpeed)
+    //    {
+    //        velocity.Normalize();
+    //        velocity *= purseData.maxSpeed;
+    //    }
+
+    //    if (seekSteeringOutput.shouldCharacterStop)
+    //    {
+    //        velocity = Vector3.zero;
+    //    }
+
+    //    Debug.DrawLine(this.transform.position, seekSteeringOutput.testPredictionPosition, Color.blue);
+    //}
 
     private void ExecuteAlign()
     {
