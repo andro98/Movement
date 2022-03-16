@@ -14,6 +14,7 @@ public class Character : MonoBehaviour
 
     private Align align;
 
+    private Face face;
     //private Arrive arrive;
 
     //private VelocityMatching velocityMatching;
@@ -26,14 +27,22 @@ public class Character : MonoBehaviour
 
     private Vector3 velocity = Vector3.zero;
 
+    private KinematicData kinematic;
+
     private void Awake()
     {
         player = FindObjectOfType<Player>();
+
+        kinematic = new KinematicData { characterPosition = this.transform.position, targetPosition = player.transform.position };
+
         align = new Align(alignData);
+
         //arrive = new Arrive(arriveData);
         //velocityMatching = new VelocityMatching(velocityMatchingData);
 
         pursue = new Pursue(purseData);
+
+        face = new Face(alignData, kinematic);
     }
 
     private void FixedUpdate()
@@ -42,7 +51,7 @@ public class Character : MonoBehaviour
 
         //ExcuteVelocityMatching();
 
-        ExecuteAlign();
+        ExecuteFace();
     }
 
     //private void ExcuteVelocityMatching()
@@ -80,7 +89,7 @@ public class Character : MonoBehaviour
             velocity = Vector3.zero;
         }
 
-        Debug.DrawLine(this.transform.position, seekSteeringOutput.testPredictionPosition, Color.blue);
+        //Debug.DrawLine(this.transform.position, seekSteeringOutput.testPredictionPosition, Color.blue);
     } 
 
     //private void ExcuteArrive()
@@ -111,6 +120,30 @@ public class Character : MonoBehaviour
         alignData.UpdateDate(this.rotationVelocity, this.transform.rotation.eulerAngles.z, this.player.transform.rotation.eulerAngles.z);
 
         SteeringOutput steeringOutput = align.GetSteering();
+
+        if (rotationVelocity != 0 && steeringOutput.angular != 0)
+        { this.transform.rotation = this.transform.rotation * Quaternion.Euler(0, 0, rotationVelocity); }
+
+        rotationVelocity += steeringOutput.angular * Time.fixedDeltaTime;
+
+        if (rotationVelocity > alignData.maxRotation)
+        {
+            rotationVelocity /= Mathf.Abs(rotationVelocity);
+            rotationVelocity *= alignData.maxRotation;
+        }
+
+        if (steeringOutput.shouldCharacterStop)
+        {
+            rotationVelocity = 0;
+        }
+    }
+
+    private void ExecuteFace()
+    {
+        kinematic.UpdateDate(this.transform.position, player.transform.position);
+        alignData.UpdateDate(this.rotationVelocity, this.transform.rotation.eulerAngles.z);
+
+        SteeringOutput steeringOutput = face.GetSteering();
 
         if (rotationVelocity != 0 && steeringOutput.angular != 0)
         { this.transform.rotation = this.transform.rotation * Quaternion.Euler(0, 0, rotationVelocity); }

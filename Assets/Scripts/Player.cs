@@ -1,5 +1,6 @@
 using UnityEngine;
 using DataStructure;
+using MovementAlgorithm;
 
 public class Player : MonoBehaviour, IStats
 {
@@ -7,8 +8,18 @@ public class Player : MonoBehaviour, IStats
     public float maxAcceleration = 2f;
 
 
+    private LookWhereYoureGoing lookWhereYoureGoing;
+
+    public AlignData alignData;
+
     private Vector3 velocity = Vector3.zero;
     private Vector3 acceleration = Vector3.zero;
+    private float rotationVelocity = 0;
+
+    private void Awake()
+    {
+        lookWhereYoureGoing = new LookWhereYoureGoing(alignData, velocity);
+    }
 
     public Vector3 GetVelocity()
     {
@@ -40,5 +51,31 @@ public class Player : MonoBehaviour, IStats
         }
 
         this.transform.position += velocity * Time.fixedDeltaTime;
+
+        ExecuteWhereYouAreGoing();
+    }
+
+    private void ExecuteWhereYouAreGoing()
+    {
+        alignData.UpdateDate(this.rotationVelocity, this.transform.rotation.eulerAngles.z);
+        lookWhereYoureGoing.velocity = velocity;
+
+        SteeringOutput steeringOutput = lookWhereYoureGoing.GetSteering();
+
+        if (rotationVelocity != 0 && steeringOutput.angular != 0)
+        { this.transform.rotation = this.transform.rotation * Quaternion.Euler(0, 0, rotationVelocity); }
+
+        rotationVelocity += steeringOutput.angular * Time.fixedDeltaTime;
+
+        if (rotationVelocity > alignData.maxRotation)
+        {
+            rotationVelocity /= Mathf.Abs(rotationVelocity);
+            rotationVelocity *= alignData.maxRotation;
+        }
+
+        if (steeringOutput.shouldCharacterStop)
+        {
+            rotationVelocity = 0;
+        }
     }
 }

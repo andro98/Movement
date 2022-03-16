@@ -188,8 +188,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 643784df5d5691246bd2d054a4474984, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: 20
-  maxAcceleration: 4
+  maxSpeed: 40
+  maxAcceleration: 8
+  alignData:
+    maxRotation: 360
+    maxAngularAcceleration: 180
+    arrivalRadius: 1.5
+    slowRadius: 2
+    timeTimeTarget: 0.1
+    rotationVelocity: 0
+    characterOrientation: 0
+    targetOrientation: 0
 --- !u!212 &134876668
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -754,8 +763,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   alignData:
-    maxRotation: 5
-    maxAngularAcceleration: 2
+    maxRotation: 50
+    maxAngularAcceleration: 10
     arrivalRadius: 1.5
     slowRadius: 2.5
     timeTimeTarget: 0.5

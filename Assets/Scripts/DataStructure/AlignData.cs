@@ -21,5 +21,11 @@
             this.characterOrientation = c;
             this.targetOrientation = t;
         }
+
+        public void UpdateDate(float r, float c)
+        {
+            this.rotationVelocity = r;
+            this.characterOrientation = c;
+        }
     }
 }
