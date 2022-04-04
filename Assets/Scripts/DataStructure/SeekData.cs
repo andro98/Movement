@@ -17,5 +17,10 @@ namespace DataStructure
             this.CharacterPosition = c;
             this.TargetPosition = t;
         }
+
+        public void UpdateData(Vector3 c)
+        {
+            this.CharacterPosition = c;
+        }
     }
 }
