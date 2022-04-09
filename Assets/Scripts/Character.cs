@@ -25,6 +25,7 @@ public class Character : MonoBehaviour
 
     public PathFollowingData pathFollowingData;
     public SeekData seekData;
+    public SeparationData separationData;
 
     private Player player;
 
@@ -33,6 +34,8 @@ public class Character : MonoBehaviour
     private KinematicData kinematic;
 
     public PathFollowing pathFollowing;
+
+    Separation separation;
 
     private void Awake()
     {
@@ -50,6 +53,8 @@ public class Character : MonoBehaviour
         //face = new Face(alignData, kinematic);
 
         pathFollowing = new PathFollowing(seekData, pathFollowingData);
+
+        separation = new Separation(separationData);
     }
 
     private void OnDrawGizmos()
@@ -75,7 +80,10 @@ public class Character : MonoBehaviour
         seekData.UpdateData(transform.position);
         pathFollowingData.charachterVelocity = velocity;
 
-        SteeringOutput steeringOutput = pathFollowing.GetSteering();
+        separationData.characterPosition = transform.position;
+
+        //SteeringOutput steeringOutput = pathFollowing.GetSteering();
+        SteeringOutput steeringOutput = separation.GetSteering();
 
         this.transform.position += velocity * Time.fixedDeltaTime;
 
